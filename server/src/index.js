@@ -6,7 +6,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const app=express(); app.use(cors()); app.use(express.json({limit:'5mb'}));
-const AI_URL=(process.env.AI_URL||'http://localhost:8000').replace(/\/$/,'');
+const rawAI=(process.env.AI_URL||'http://localhost:8000').replace(/\/$/,'');
+const AI_URL=/^https?:\/\//.test(rawAI)?rawAI:`http://${rawAI}`;
 const __dirname=path.dirname(fileURLToPath(import.meta.url));
 
 let dbReady=false;
