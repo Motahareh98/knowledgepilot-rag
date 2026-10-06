@@ -17,4 +17,7 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: AI_URL
-        value: https://motahareh-knowledgepilot-engine.onrender.com
+        fromService:
+          type: web
+          name: motahareh-knowledgepilot-engine
+          property: hostport
