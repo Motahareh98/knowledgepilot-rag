@@ -1,6 +1,6 @@
 fastapi
 uvicorn[standard]
 pydantic
-sentence-transformers
+fastembed
 numpy
 httpx
