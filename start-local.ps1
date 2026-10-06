@@ -4,6 +4,9 @@ $nodeDir = "C:\Program Files\nodejs"
 $node = Join-Path $nodeDir "node.exe"
 $npm = Join-Path $nodeDir "npm.cmd"
 
+# Ensure npm child processes can resolve node.exe.
+$env:Path = "$nodeDir;$env:Path"
+
 if (!(Test-Path $node)) {
     throw "Node.js was not found at $nodeDir. Install Node.js LTS first."
 }
