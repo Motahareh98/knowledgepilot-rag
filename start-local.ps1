@@ -1,28 +1,43 @@
 $ErrorActionPreference = "Stop"
 
 $nodeDir = "C:\Program Files\nodejs"
+$node = Join-Path $nodeDir "node.exe"
 $npm = Join-Path $nodeDir "npm.cmd"
-if (!(Test-Path $npm)) {
+
+if (!(Test-Path $node)) {
     throw "Node.js was not found at $nodeDir. Install Node.js LTS first."
+}
+if (!(Test-Path $npm)) {
+    throw "npm was not found at $nodeDir."
 }
 
 Write-Host "Using Node.js from $nodeDir"
-& (Join-Path $nodeDir "node.exe") --version
+& $node --version
 & $npm --version
 
-Write-Host "Starting project without Docker..."
+Write-Host "Starting knowledgepilot-rag without Docker..."
 
-Start-Process powershell -ArgumentList '-NoExit','-Command','cd ai-service; if (!(Test-Path .venv)) { python -m venv .venv }; .\.venv\Scripts\Activate.ps1; pip install -r requirements.txt; uvicorn main:app --reload --port 8000'
+$root = $PSScriptRoot
 
-Start-Sleep -Seconds 2
+# Start the Python AI service in a separate PowerShell window.
+$aiScript = Join-Path $root "start-ai-local.ps1"
+Start-Process powershell -ArgumentList "-NoExit","-ExecutionPolicy","Bypass","-File",$aiScript
 
-Push-Location client
+Start-Sleep -Seconds 3
+
+# Build the React frontend.
+Push-Location (Join-Path $root "client")
 & $npm install
 & $npm run build
 Pop-Location
 
-$serverCommand = '$env:AI_URL="http://localhost:8000"; cd server; & "C:\Program Files\nodejs\npm.cmd" install; & "C:\Program Files\nodejs\npm.cmd" start'
-Start-Process powershell -ArgumentList '-NoExit','-Command',$serverCommand
+# Run the Node/Express web app in this terminal.
+$env:AI_URL = "http://localhost:8000"
+Push-Location (Join-Path $root "server")
+& $npm install
 
-Start-Sleep -Seconds 3
+Write-Host ""
+Write-Host "Opening http://localhost:5000 ..."
 Start-Process "http://localhost:5000"
+& $npm start
+Pop-Location
