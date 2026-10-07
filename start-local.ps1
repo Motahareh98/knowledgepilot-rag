@@ -35,7 +35,7 @@ Push-Location (Join-Path $root "client")
 Pop-Location
 
 # Run the Node/Express web app in this terminal.
-$env:AI_URL = "http://localhost:8000"
+$env:AI_URL = "http://localhost:8001"
 Push-Location (Join-Path $root "server")
 & $npm install
 
