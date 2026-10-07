@@ -36,11 +36,12 @@ Pop-Location
 
 # Run the Node/Express web app in this terminal.
 $env:AI_URL = "http://localhost:8001"
+$env:PORT = "5001"
 Push-Location (Join-Path $root "server")
 & $npm install
 
 Write-Host ""
-Write-Host "Opening http://localhost:5000 ..."
-Start-Process "http://localhost:5000"
+Write-Host "Opening http://localhost:5001 ..."
+Start-Process "http://localhost:5001"
 & $npm start
 Pop-Location
